@@ -1,5 +1,6 @@
 package com.example.mukhter.codingtest;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     JSONObject object4;
     RecyclerView recyclerView;
    ArrayList<Model> modelArrayList; // arraylist that holds all the data
-
+    ProgressDialog dialog;
 
     private Adapter adapter;
     private Paint p = new Paint();
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         modelArrayList =new ArrayList<>();
 
-
+        dialog = new ProgressDialog(this);
         DownloadTask task = new DownloadTask();
         try {
             task.execute("https://restcountries.eu/rest/v2/all");//api
@@ -151,9 +152,14 @@ recyclerView= (RecyclerView)findViewById(R.id.recycler);
             return null;
 
         }
-
+        protected void onPreExecute() {
+            dialog.setMessage("Loading Info...");
+            dialog.setCancelable(true);
+            dialog.show();
+        }
         @Override
         protected void onPostExecute(Boolean aBoolean) {
+            dialog.cancel();
             adapter.notifyDataSetChanged();
             super.onPostExecute(aBoolean);
         }
